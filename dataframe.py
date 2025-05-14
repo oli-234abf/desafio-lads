@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings('ignore')
 
 
 # Criando um dataset de exemplo
@@ -61,3 +64,10 @@ df_vendas.to_csv('dados_vendas.csv', index=False)
 
 # Visualizando as primeiras linhas
 df_vendas.head()
+
+print("Primeiras 5 linhas do DataFrame:")
+print(df_vendas.head(5))
+
+print("Últimas 5 linhas do DataFrame:")
+print(df_vendas.tail(5))
+

@@ -1,3 +1,5 @@
+from readline import redisplay
+import math
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -285,7 +287,147 @@ df_ordenado_regiao = df_vendas.sort_values(['regiao','valor_venda'],
 print("Ordenação por região e depois por valo de venda(decrescente):")
 print(df_ordenado_regiao.head(10))
 
+#4
 df_produto = df_vendas.set_index('produto')
 
 print("DataFrame com 'produto' como índice:")
 print(df_produto.head(5))
+print("Vendas de Smartphone:")
+try:
+    produto_smartphone= df_produto.index['Smartphone']  
+    print(f"Vendas em {produto_smartphone}:")
+    redisplay(df_produto.loc[produto_smartphone])
+except:
+    print("Certifique-se de que o DataFrame está indexado por 'Smartphone'")
+
+#5
+
+# Resetando o índice para voltar ao formato original
+df_reset = df_vendas.reset_index()
+
+print("DataFrame após reset do índice vendas:")
+print(df_reset.head(5))
+
+#4.2
+media_quantidade = df_vendas['quantidade'].mean()
+print(f"Valor da média da coluna quantidade: {media_quantidade:.2f}")
+
+#4.3
+total_vendas = df_vendas['valor_venda'].sum()
+print(f"O faturamento total foi de: R${total_vendas:.2f}")
+
+#4.4
+max_avaliacao = df_vendas['avaliacao'].max()
+print(f"Maior valor de avaliação: {max_avaliacao}")
+
+#4.5
+media_por_regiao = df_vendas.groupby('regiao')['valor_venda'].mean()
+media_decrescente = media_por_regiao.sort_values(ascending=False)
+print("Valor médio de venda por categoria:")
+print(media_decrescente)
+
+#4.6
+valores_venda.canal_venda = ['Contagem', 'Média', 'Mínimo', 'Máximo']
+
+print("Estatísticas por 'valores_venda' (canal_venda):")
+print(valores_venda)
+
+#5.1
+soma_por_canal = df_vendas.groupby('canal_venda')['valor_venda'].sum()
+
+print("Valor total de vendas por canal:")
+print(soma_por_canal)
+#5.2
+
+media_por_estado = df_vendas.groupby('estado')['quantidade'].mean()
+print("Valor médio de itens vendidos por estado:")
+print(media_por_estado)
+
+#5.4
+med_categoria = df_vendas.groupby('categoria')['avaliacao'].mean()
+print("Valor médio de avaliação por produto:")
+print(med_categoria)
+
+#5.5
+regiao_canal = df_vendas.groupby('regiao')['canal_venda'].count()
+
+soma_venda_tot = df_vendas.groupby(regiao_canal).sum
+
+
+print("Valor total de vendas de região por canal:")
+print(soma_venda_tot)
+
+#5.6
+agg_mult_colunas = df_vendas.groupby('produto').agg({
+    'valor_venda': ['count','sum', 'mean']
+   
+})
+
+# print("Agregações múltiplas por categoria:")
+# print(agg_mult_colunas)
+
+# #6.1
+# df_vendas['mes'] = df_vendas['data'].dt.month
+# print(df_vendas[['data','mes']])
+# mes = df_vendas['mes']
+# df_vendas['trimestre'] = df_vendas['data'].math.ceil(mes/3)
+print(f"Tipo de dado da coluna 'data': {df_vendas['data'].dtype}")
+# df_vendas['ano'] = df_vendas['data'].dt.year
+# df_vendas['mes'] = df_vendas['data'].dt.month
+# df_vendas['dia'] = df_vendas['data'].dt.day
+# df_vendas['dia_semana'] = df_vendas['data'].dt.day_name()
+
+# # Visualizando as novas colunas
+# print("Primeiras linhas com as novas colunas de data:")
+# print(df_vendas[['data', 'ano', 'mes', 'dia', 'dia_semana']].head())
+
+df_vendas['data'] = pd.to_datetime(df_vendas['data'])
+print(f"Novo tipo de dado da coluna 'data': {df_vendas['data'].dtype}")
+
+df_vendas['mes'] = df_vendas['data'].dt.month
+print(df_vendas[['data','mes']])
+
+df_vendas['trimestre'] = df_vendas['mes'].apply(lambda mes: math.ceil(mes/3))
+
+print(df_vendas[['data','mes','trimestre']])
+
+#6.2
+df_vendas['dia_util'] =  df_vendas['data'].dt.day_of_week < 5
+df_vendas['fim_semana'] = df_vendas['data'].dt.day_of_week >= 5
+
+print("Dias da semana que ocorreram vendas:")
+print(df_vendas['dia_util'])
+
+print("Fins de semana que ocorreu venda:")
+print(df_vendas['fim_semana'])
+
+#6.3
+df_vendas ['margem_lucro'] = df_vendas['valor_venda'] * 0.3
+print(df_vendas[['margem_lucro']])
+
+#6.4
+def cat_aval (avaliacao):
+    if avaliacao < 3:
+        return 'Ruim'
+    elif avaliacao >=5:
+        return 'Exelente'
+    else:
+        if avaliacao == 3:
+            return 'Regular'
+        else:
+            return 'Bom'
+df_vendas['nivel_avaliacao']  = df_vendas['avaliacao'].apply(cat_aval)
+print(df_vendas[['avaliacao','nivel_avaliacao']])
+
+# #6.5
+# med_venda = df_vendas.groupby('categoria')['valor_venda'].mean
+# def cat_venda (valor_venda):
+#     if valor_venda > med_venda:
+#         return True
+#     else:
+#         return False
+# df_vendas['acima_media']= df_vendas['valor_venda'].apply(cat_venda)
+
+# print(df_vendas['valor_venda','acima_media'])
+
+vendas_por_cat = df_vendas.groupby('vendas')['canal_venda'].sum()
